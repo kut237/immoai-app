@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
@@ -479,6 +479,127 @@
                     </div>
 
                     <div class="chart-container">
+                        <!-- BREAK-EVEN: Inputs -->
+                        <div class="property-card" id="breakeven-card" style="margin-top:20px;">
+                        <h3 style="margin-bottom:16px;">💸 Break-Even-Rechnung</h3>
+
+                        <div class="metrics-grid" style="margin-bottom:10px;">
+                            <div class="metric-card">
+                            <div class="metric-label">Kaufpreis (€)</div>
+                            <input id="be-price" type="number" class="url-input" min="0" step="1000" />
+                            </div>
+                            <div class="metric-card">
+                            <div class="metric-label">Eigenkapital (€)</div>
+                            <input id="be-equity" type="number" class="url-input" min="0" step="1000" value="0" />
+                            </div>
+                            <div class="metric-card">
+                            <div class="metric-label">Zinssatz p.a. (%)</div>
+                            <input id="be-interest" type="text" class="url-input" value="4,5" />
+                            </div>
+                            <div class="metric-card">
+                            <div class="metric-label">Anfängliche Tilgung p.a. (%)</div>
+                            <input id="be-redemption" type="text" class="url-input" value="2,0" />
+                            </div>
+                            <div class="metric-card">
+                            <div class="metric-label">Nicht uml. Kosten/Monat (€)</div>
+                            <input id="be-nuk" type="number" class="url-input" min="0" step="10" value="100" />
+                            </div>
+                            <div class="metric-card">
+                            <div class="metric-label">Annahme Laufzeit</div>
+                            <div class="metric-value">10 Jahre</div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card" style="margin-bottom:16px;">
+                            <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
+                            <label style="font-weight:600;">Mietquelle:</label>
+                            <label><input type="radio" name="rent-source" value="listing" checked /> Inseratsmiete</label>
+                            <label><input type="radio" name="rent-source" value="mirror" /> Mietspiegel</label>
+                            <label><input type="radio" name="rent-source" value="combined" /> Inseratsmiete&nbsp;&amp;&nbsp;Mietspiegel</label>
+                            </div>
+
+                            <!-- Inseratsmiete -->
+                            <div id="rent-listing-wrap" style="display:flex; gap:10px; align-items:center; margin-top:10px;">
+                            <span>Inseratsmiete (kalt) €/Monat (gesamt):</span>
+                            <input id="be-rent-listing" type="number" class="url-input" min="0" step="10" value="0" style="max-width:200px;" />
+                            </div>
+
+                            <!-- Mietspiegel -->
+                            <div id="rent-mirror-wrap" style="display:none; gap:10px; align-items:center; margin-top:10px;">
+                            <span>Mietspiegel €/m²/Monat:</span>
+                            <input id="be-rent-per-sqm" type="text" class="url-input" value="12,0" style="max-width:120px;" />
+                            <span>Wohnfl. (m²):</span>
+                            <input id="be-living-space" type="number" class="url-input" min="0" step="1" value="0" style="max-width:120px;" />
+                            </div>
+
+                            <!-- Kombiniert -->
+                            <div id="rent-combined-wrap" style="display:none; gap:14px; align-items:center; flex-wrap:wrap; margin-top:10px;">
+                            <div style="display:flex; gap:10px; align-items:center;">
+                                <span>Inseratsmiete €/Monat (Summe):</span>
+                                <input id="be-rent-listing-comb" type="number" class="url-input" min="0" step="10" value="0" style="max-width:160px;" />
+                            </div>
+                            <div style="display:flex; gap:10px; align-items:center;">
+                                <span>Mietspiegel €/m²/Monat:</span>
+                                <input id="be-rent-per-sqm-comb" type="text" class="url-input" value="12,0" style="max-width:100px;" />
+                                <span>m² nach Mietspiegel:</span>
+                                <input id="be-sqm-comb" type="number" class="url-input" min="0" step="1" value="0" style="max-width:120px;" />
+                            </div>
+                            </div>
+
+                            <div style="margin-top:12px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                            <button class="btn btn-primary" id="be-calc-btn">Berechnen</button>
+                            <span style="color:var(--gray); font-size:14px;">
+                                Annuität = Darlehen × (Zins% + anfängliche Tilgung%). Zinsanteil sinkt jährlich, Tilgung steigt – Annuität bleibt konstant.
+                            </span>
+                            </div>
+                        </div>
+
+                        <div class="metrics-grid" style="margin-bottom:10px;">
+                            <div class="metric-card">
+                            <div class="metric-label">🧮 Monatliche Kreditrate</div>
+                            <div class="metric-value" id="be-monthly-rate">€0</div>
+                            </div>
+                            <div class="metric-card">
+                            <div class="metric-label">🏷️ Monatsmiete (netto kalt)</div>
+                            <div class="metric-value" id="be-monthly-rent">€0</div>
+                            </div>
+                            <div class="metric-card">
+                            <div class="metric-label">⚖️ Cashflow/Monat (nach nicht uml.)</div>
+                            <div class="metric-value" id="be-monthly-cf">€0</div>
+                            </div>
+                            <div class="metric-card">
+                            <div class="metric-label">📍 Break-Even (Jahr)</div>
+                            <div class="metric-value" id="be-year">–</div>
+                            </div>
+                        </div>
+
+                        <div class="chart-container">
+                            <canvas id="be-cashflow-chart"></canvas>
+                        </div>
+
+                        <div class="property-card" style="margin-top:16px;">
+                            <h4 style="margin-bottom:10px;">Tabellarische Übersicht (jährlich; Laufzeit 10 Jahre)</h4>
+                            <div style="overflow:auto; max-height:360px; border:1px solid #e2e8f0; border-radius:12px;">
+                            <table id="be-table" style="width:100%; border-collapse:collapse;">
+                                <thead style="position:sticky; top:0; background:#fff;">
+                                <tr>
+                                    <th style="padding:10px; border-bottom:1px solid #e2e8f0;">Jahr</th>
+                                    <th style="padding:10px; border-bottom:1px solid #e2e8f0;">Restschuld (Jahresanfang)</th>
+                                    <th style="padding:10px; border-bottom:1px solid #e2e8f0;">Zinsanteil</th>
+                                    <th style="padding:10px; border-bottom:1px solid #e2e8f0;">Tilgungsanteil</th>
+                                    <th style="padding:10px; border-bottom:1px solid #e2e8f0;">Annuität (Jahr)</th>
+                                    <th style="padding:10px; border-bottom:1px solid #e2e8f0;">Miete (Jahr)</th>
+                                    <th style="padding:10px; border-bottom:1px solid #e2e8f0;">Nicht uml. Kosten (Jahr)</th>
+                                    <th style="padding:10px; border-bottom:1px solid #e2e8f0;">Cashflow (Jahr)</th>
+                                    <th style="padding:10px; border-bottom:1px solid #e2e8f0;">Kumul. Cashflow</th>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                            </div>
+                        </div>
+                        </div>
+                        <!-- ENDE BREAK-EVEN -->
                         <canvas id="priceChart"></canvas>
                     </div>
                 </div>
@@ -670,5 +791,225 @@
             console.log('Demo-Modus aktiv - Nutze Beispieldaten für Tests');
         }
     </script>
+    <script>
+    /* ===== Break-Even Rechner v2 (10 Jahre, kombinierte Miete) ===== */
+
+    let beChart;
+    const TERM_YEARS = 10;
+
+    // robustes Parsing (Akzeptiert "3,5" und "3.5")
+    const parsePct = (v) => {
+    if (v == null) return 0;
+    const s = String(v).trim().replace('%','').replace('.','').replace(',','.');
+    // Sonderfall: "3,5" -> "35"? Wir haben oben "." bereits entfernt, also besser:
+    // Alternative: erst Komma -> Punkt, dann NICHT die Punkte entfernen, sondern nur Tausender:
+    // Aber Input ist kurz, daher:
+    const n = Number(s);
+    return isNaN(n) ? 0 : n;
+    };
+    const parseNum = (v) => {
+    if (v == null) return 0;
+    const s = String(v).trim().replace(/\./g,'').replace(',','.');
+    const n = Number(s);
+    return isNaN(n) ? 0 : n;
+    };
+    const byId = (id) => document.getElementById(id);
+    const fmtEUR = (n) => '€' + (Math.round(n).toLocaleString('de-DE'));
+
+    // Umschalten Mietquelle
+    document.addEventListener('change', (e) => {
+    if (e.target.name === 'rent-source') {
+        const val = e.target.value;
+        byId('rent-listing-wrap').style.display  = (val === 'listing')   ? 'flex' : 'none';
+        byId('rent-mirror-wrap').style.display   = (val === 'mirror')    ? 'flex' : 'none';
+        byId('rent-combined-wrap').style.display = (val === 'combined')  ? 'flex' : 'none';
+    }
+    });
+
+    byId('be-calc-btn').addEventListener('click', runBreakEven);
+
+    function buildSchedule({ loan, interestPct, redeemPct, startMonthlyRent, monthlyNonAlloc }) {
+    const i = interestPct / 100;
+    const t = redeemPct / 100;
+    const annYear = loan * (i + t);     // konstant p.a.
+    const annMonth = annYear / 12;
+
+    let rest = loan;
+    const rows = [];
+    let cumCF = 0;
+    let beYear = null;
+
+    for (let y = 1; y <= TERM_YEARS; y++) {
+        const rentYear = startMonthlyRent * 12;
+        const nonAllocYear = monthlyNonAlloc * 12;
+
+        const interestY = rest * i;
+        const redemptionY = Math.min(annYear - interestY, rest);
+        const endRest = Math.max(rest - redemptionY, 0);
+
+        const cfYear = rentYear - annYear - nonAllocYear;
+        cumCF += cfYear;
+
+        if (beYear === null && cfYear >= 0) beYear = y;
+
+        rows.push({
+        year: y,
+        restStart: rest,
+        interestY,
+        redemptionY,
+        annYear,
+        rentYear,
+        nonAllocYear,
+        cfYear,
+        cumCF,
+        restEnd: endRest
+        });
+
+        rest = endRest;
+        if (rest <= 0) break;
+    }
+
+    return { rows, annMonth, beYear };
+    }
+
+    function currentMonthlyRent() {
+    const source = [...document.getElementsByName('rent-source')]
+        .find(r => r.checked)?.value || 'listing';
+
+    if (source === 'listing') {
+        return parseNum(byId('be-rent-listing').value);
+    }
+    if (source === 'mirror') {
+        const perSqm = parseNum(byId('be-rent-per-sqm').value);
+        const sqm    = parseNum(byId('be-living-space').value);
+        return perSqm * sqm;
+    }
+    // combined
+    const listing = parseNum(byId('be-rent-listing-comb').value);
+    const perSqmC = parseNum(byId('be-rent-per-sqm-comb').value);
+    const sqmC    = parseNum(byId('be-sqm-comb').value);
+    return listing + perSqmC * sqmC;
+    }
+
+    function runBreakEven() {
+    const price   = parseNum(byId('be-price').value);
+    const equity  = parseNum(byId('be-equity').value);
+    const loan    = Math.max(price - equity, 0);
+
+    const interestPct = parsePct(byId('be-interest').value);
+    const redeemPct   = parsePct(byId('be-redemption').value);
+    const monthlyNonAlloc = parseNum(byId('be-nuk').value);
+
+    const monthlyRent = currentMonthlyRent();
+
+    if (loan <= 0) {
+        alert('Bitte Kaufpreis und Eigenkapital so setzen, dass ein Darlehen > 0 entsteht.');
+        return;
+    }
+
+    const { rows, annMonth, beYear } = buildSchedule({
+        loan, interestPct, redeemPct,
+        startMonthlyRent: monthlyRent,
+        monthlyNonAlloc
+    });
+
+    const monthlyCF = monthlyRent - annMonth - monthlyNonAlloc;
+
+    byId('be-monthly-rate').textContent = fmtEUR(annMonth);
+    byId('be-monthly-rent').textContent = fmtEUR(monthlyRent);
+    byId('be-monthly-cf').textContent   = fmtEUR(monthlyCF);
+    byId('be-year').textContent         = beYear ? beYear : '–';
+
+    renderTable(rows);
+    renderCFChart(rows);
+    }
+
+    function renderTable(rows) {
+    const tbody = document.querySelector('#be-table tbody');
+    tbody.innerHTML = '';
+    rows.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+        <td>${r.year}</td>
+        <td>${fmtEUR(r.restStart)}</td>
+        <td>${fmtEUR(r.interestY)}</td>
+        <td>${fmtEUR(r.redemptionY)}</td>
+        <td>${fmtEUR(r.annYear)}</td>
+        <td>${fmtEUR(r.rentYear)}</td>
+        <td>${fmtEUR(r.nonAllocYear)}</td>
+        <td style="color:${r.cfYear>=0?'#059669':'#ef4444'}">${fmtEUR(r.cfYear)}</td>
+        <td>${fmtEUR(r.cumCF)}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+    }
+
+    function renderCFChart(rows) {
+    const ctx = document.getElementById('be-cashflow-chart').getContext('2d');
+    if (beChart) beChart.destroy();
+
+    beChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+        labels: rows.map(r => `J${r.year}`),
+        datasets: [{
+            label: 'Cashflow / Jahr',
+            data: rows.map(r => Math.round(r.cfYear)),
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.15)',
+            tension: 0.35,
+            fill: true
+        }]
+        },
+        options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false },
+            title: { display: true, text: 'Cashflow-Entwicklung (10 Jahre)' }
+        },
+        scales: {
+            y: { ticks: { callback: (v) => '€' + Number(v).toLocaleString('de-DE') } }
+        }
+        }
+    });
+    }
+
+    /* Prefill aus Analyse-Ergebnis */
+    function prefillBreakEven(data) {
+    const price = data.estimatedValue || 0;
+    const sqm = Number((data.livingSpace || '0').toString().replace(',','.')) || 0;
+
+    byId('be-price').value = Math.round(price);
+    byId('be-living-space').value = Math.round(sqm);
+
+    // Schätzung aus yield (falls vorhanden)
+    const yieldPct = parsePct(data.yield);
+    const guessedMonthlyRent = yieldPct > 0 ? (price * (yieldPct/100)) / 12 : 0;
+    byId('be-rent-listing').value = Math.round(guessedMonthlyRent);
+
+    runBreakEven();
+    }
+
+    /* Hook in bestehende displayResults */
+    const _origDisplayResults = displayResults;
+    displayResults = function(data){
+    _origDisplayResults(data);
+    prefillBreakEven(data);
+    };
+    </script>
+
+    <style> 
+        #be-table td, #be-table th { font-size:14px; text-align:right; padding:10px; }
+        #be-table td:first-child, #be-table th:first-child { text-align:left; }
+        #be-table tbody tr:nth-child(even){ background:#f9fafb; }
+        .metrics-grid input {
+            width: 100;
+        }
+    </style>
 </body>
 </html>
+
+
+$ git config --global user.name "kut237"
+$ git config --global user.email aykut237@hotmail.de
