@@ -1,1012 +1,2387 @@
 ﻿<!DOCTYPE html>
 <html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ImmoAI - Intelligente Immobilienbewertung</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #22d3ee;
-            --dark: #0f172a;
-            --gray: #64748b;
-            --light: #f8fafc;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-        }
+      :root {
+        --primary: #6366f1;
+        --primary-dark: #4f46e5;
+        --secondary: #22d3ee;
+        --dark: #0f172a;
+        --gray: #64748b;
+        --light: #f8fafc;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+      }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: var(--dark);
-        }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: var(--dark);
+      }
 
+      .ai-analysis {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        color: white;
+        padding: 0;
+        border-radius: 20px;
+        margin-top: 30px;
+        box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
+        overflow: hidden;
+      }
+
+      .ai-analysis-header {
+        padding: 25px 30px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .ai-analysis-header h3 {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 0;
+        font-size: 22px;
+        font-weight: 700;
+      }
+
+      .ai-summary {
+        padding: 20px 30px;
+        background: rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .ai-summary-text {
+        font-size: 16px;
+        line-height: 1.6;
+        margin: 0;
+      }
+
+      .verdict-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.15);
+        font-size: 13px;
+        font-weight: 600;
+        margin-left: 8px;
+        backdrop-filter: blur(10px);
+      }
+
+      .ai-scores {
+        padding: 25px 30px;
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .scores-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 20px;
+        margin-top: 15px;
+      }
+
+      .score-item {
+        text-align: center;
+        background: rgba(255, 255, 255, 0.08);
+        padding: 15px 10px;
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+      }
+
+      .score-label {
+        font-size: 12px;
+        opacity: 0.8;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .score-value {
+        font-size: 20px;
+        font-weight: 700;
+        color: #fbbf24;
+      }
+
+      .ai-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        padding: 25px 30px;
+      }
+
+      .detail-section {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 20px;
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+      }
+
+      .detail-section h4 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 14px;
+      }
+
+      .detail-row:last-child {
+        border-bottom: none;
+      }
+
+      .detail-label {
+        opacity: 0.8;
+      }
+
+      .detail-value {
+        font-weight: 600;
+        text-align: right;
+      }
+
+      .ai-lists {
+        padding: 25px 30px;
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .lists-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+      }
+
+      .list-section {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 20px;
+        border-radius: 15px;
+      }
+
+      .list-section h4 {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .list-section ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .list-section li {
+        padding: 6px 0;
+        font-size: 13px;
+        line-height: 1.4;
+        position: relative;
+        padding-left: 15px;
+      }
+
+      .list-section li:before {
+        content: "•";
+        position: absolute;
+        left: 0;
+        color: #fbbf24;
+        font-weight: bold;
+      }
+
+      .red-flags li:before {
+        content: "⚠";
+      }
+
+      .actions li:before {
+        content: "→";
+      }
+
+      .confidence-footer {
+        padding: 15px 30px;
+        background: rgba(255, 255, 255, 0.05);
+        text-align: center;
+        font-size: 12px;
+        opacity: 0.8;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 20px 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        animation: slideDown 0.5s ease-out;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .logo-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--secondary) 100%
+        );
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: white;
+        animation: pulse 2s infinite;
+      }
+
+      .logo h1 {
+        font-size: 28px;
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--secondary) 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .main-card {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(10px);
+        border-radius: 30px;
+        padding: 40px;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+        animation: fadeIn 0.7s ease-out;
+      }
+
+      .input-section {
+        margin-bottom: 40px;
+      }
+
+      .url-input-group {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .url-input {
+        flex: 1;
+        padding: 18px 24px;
+        border: 2px solid #e2e8f0;
+        border-radius: 15px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        background: white;
+      }
+
+      .url-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+      }
+
+      .btn {
+        padding: 18px 35px;
+        border: none;
+        border-radius: 15px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--primary-dark) 100%
+        );
+        color: white;
+        box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 35px rgba(99, 102, 241, 0.4);
+      }
+
+      .results-section {
+        display: none;
+        margin-top: 40px;
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      .results-section.active {
+        display: block;
+      }
+
+      .property-card {
+        background: linear-gradient(135deg, #f8fafc 0%, white 100%);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        border: 1px solid #e2e8f0;
+        animation: slideUp 0.5s ease-out;
+      }
+
+      .property-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 25px;
+      }
+
+      .property-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 8px;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .property-title:hover {
+        text-decoration: underline;
+      }
+
+      .property-address {
+        color: var(--gray);
+        font-size: 16px;
+      }
+
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .metric-card {
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+      }
+
+      .metric-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .metric-label {
+        color: var(--gray);
+        font-size: 14px;
+        margin-bottom: 8px;
+        font-weight: 500;
+      }
+
+      .metric-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--dark);
+      }
+
+      /* Special styling for price card */
+      .price-card {
+        background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+        color: white;
+        box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+        animation: pulse 2s infinite;
+        order: -1; /* Move to first position */
+      }
+
+      .price-card .metric-label,
+      .price-card .metric-value {
+        color: white;
+      }
+
+      .loading {
+        display: none;
+        text-align: center;
+        padding: 40px;
+      }
+
+      .loading.active {
+        display: block;
+      }
+
+      .spinner {
+        width: 60px;
+        height: 60px;
+        border: 4px solid var(--light);
+        border-top-color: var(--primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+      }
+
+      .chart-container {
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        margin-top: 20px;
+        height: auto;
+      }
+
+      /* Repayment table styles */
+      .repayment-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        font-size: 14px;
+      }
+
+      .repayment-table th,
+      .repayment-table td {
+        padding: 12px 8px;
+        text-align: right;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      .repayment-table th:first-child,
+      .repayment-table td:first-child {
+        text-align: left;
+      }
+
+      .repayment-table thead {
+        background: #f8fafc;
+        position: sticky;
+        top: 0;
+      }
+
+      .repayment-table tbody tr:nth-child(even) {
+        background: #f9fafb;
+      }
+
+      /* Notes field */
+      .notes-section {
+        margin-top: 30px;
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        border: 1px solid #e2e8f0;
+      }
+
+      .notes-field {
+        width: 100%;
+        min-height: 120px;
+        padding: 15px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-family: inherit;
+        font-size: 14px;
+        resize: vertical;
+        transition: border-color 0.3s ease;
+      }
+
+      .notes-field:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+      }
+
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .ms-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: #eef2ff;
+        color: #4338ca;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .ms-pill a {
+        color: inherit;
+        text-decoration: underline;
+      }
+
+      #be-table-steps {
+        text-align: center;
+      }
+
+      #be-table-steps td,
+      #be-table-steps th {
+        font-size: 14px;
+        text-align: right;
+        padding: 10px;
+      }
+
+      #be-table-steps td:first-child,
+      #be-table-steps th:first-child {
+        text-align: left;
+      }
+
+      #be-table-steps tbody tr:nth-child(even) {
+        background: #f9fafb;
+      }
+
+      .verdict-badge.good {
+        background: rgba(16, 185, 129, 0.3);
+        color: #10b981;
+        border: 1px solid rgba(16, 185, 129, 0.4);
+      }
+
+      .verdict-badge.warning {
+        background: rgba(245, 158, 11, 0.3);
+        color: #f59e0b;
+        border: 1px solid rgba(245, 158, 11, 0.4);
+      }
+
+      .verdict-badge.neutral {
+        background: rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      /* Mobile Responsiveness */
+      html, body {
+        overflow-x: hidden;
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 1200px;
+        overflow-x: hidden;
+      }
+
+      /* Fix button colors to match price card */
+      .btn-primary,
+      #be-load-ms,
+      #be-load-ms-comb,
+      #be-calc-btn {
+        background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+        color: white;
+        box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+      }
+
+      .btn-primary:hover,
+      #be-load-ms:hover,
+      #be-load-ms-comb:hover,
+      #be-calc-btn:hover {
+        background: linear-gradient(135deg, #059669 0%, var(--success) 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4);
+      }
+
+      /* Make tables same width as notes section */
+      .property-card,
+      .notes-section {
+        max-width: 100%;
+        width: 100%;
+      }
+
+      .repayment-table,
+      #be-table-steps {
+        width: 100%;
+        table-layout: auto;
+      }
+
+      @media (max-width: 768px) {
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+          padding: 8px;
+          width: 100%;
+          max-width: 100vw;
         }
-
+        
         .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 20px 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            animation: slideDown 0.5s ease-out;
+          padding: 15px 20px;
+          margin-bottom: 20px;
+          width: 100%;
+          border-radius: 15px;
         }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
+        
         .logo-icon {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: white;
-            animation: pulse 2s infinite;
+          width: 40px;
+          height: 40px;
+          font-size: 20px;
         }
-
+        
         .logo h1 {
-            font-size: 28px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+          font-size: 22px;
         }
-
+        
         .main-card {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
-            padding: 40px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
-            animation: fadeIn 0.7s ease-out;
+          padding: 15px;
+          border-radius: 20px;
+          width: 100%;
+          max-width: 100%;
         }
-
-        .input-section {
-            margin-bottom: 40px;
-        }
-
-        .input-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            background: var(--light);
-            padding: 5px;
-            border-radius: 15px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 15px 20px;
-            border: none;
-            background: transparent;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: var(--gray);
-        }
-
-        .tab-btn.active {
-            background: white;
-            color: var(--primary);
-            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.2);
-        }
-
-        .input-area {
-            display: none;
-            animation: slideUp 0.4s ease-out;
-        }
-
-        .input-area.active {
-            display: block;
-        }
-
+        
         .url-input-group {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
+          flex-direction: column;
+          gap: 10px;
+          width: 100%;
         }
 
         .url-input {
-            flex: 1;
-            padding: 18px 24px;
-            border: 2px solid #e2e8f0;
-            border-radius: 15px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: white;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+        
+        .btn {
+          padding: 15px 20px;
+          font-size: 14px;
+          width: 100%;
+          justify-content: center;
+        }
+        
+        .property-card {
+          padding: 15px;
+          margin-bottom: 20px;
+          width: 100%;
+          max-width: 100%;
+        }
+        
+        .property-header {
+          flex-direction: column;
+          gap: 15px;
+          align-items: flex-start;
+        }
+        
+        .property-title {
+          font-size: 18px;
+          line-height: 1.3;
+        }
+        
+        .metrics-grid {
+          grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+          gap: 12px;
+          width: 100%;
+        }
+        
+        .metric-card {
+          padding: 12px;
+          min-width: 0;
+        }
+        
+        .metric-value {
+          font-size: 18px;
+          word-break: break-word;
+        }
+        
+        .ai-details {
+          grid-template-columns: 1fr;
+          padding: 15px;
+          gap: 15px;
+        }
+        
+        .ai-analysis-header {
+          padding: 15px 15px 10px;
+        }
+        
+        .ai-summary {
+          padding: 12px 15px;
+        }
+        
+        .ai-scores {
+          padding: 15px;
+        }
+        
+        .scores-grid {
+          grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+          gap: 12px;
+        }
+        
+        .score-item {
+          padding: 12px 8px;
+        }
+        
+        .ai-lists {
+          padding: 15px;
+        }
+        
+        .lists-grid {
+          grid-template-columns: 1fr;
+          gap: 15px;
+        }
+        
+        .repayment-table,
+        #be-table-steps {
+          font-size: 11px;
+          width: 100%;
+        }
+        
+        .repayment-table th,
+        .repayment-table td,
+        #be-table-steps th,
+        #be-table-steps td {
+          padding: 6px 2px;
+          font-size: 10px;
+          word-break: break-word;
+        }
+        
+        .notes-section {
+          padding: 15px;
+          width: 100%;
+        }
+        
+        .notes-field {
+          padding: 12px;
+          font-size: 13px;
+          width: 100%;
+          max-width: 100%;
         }
 
-        .url-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        /* Better mobile input styling */
+        .url-input,
+        input[type="number"],
+        input[type="text"],
+        select,
+        textarea {
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+
+        /* Responsive table containers */
+        .property-card > div[style*="overflow"] {
+          margin: 0 -15px;
+        }
+
+        .property-card table {
+          min-width: 100%;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 5px;
+        }
+        
+        .header {
+          padding: 12px 15px;
+          margin-bottom: 15px;
+        }
+
+        .main-card {
+          padding: 12px;
+          border-radius: 15px;
+        }
+        
+        .metrics-grid {
+          grid-template-columns: 1fr 1fr;
+          gap: 8px;
+        }
+        
+        .metric-card {
+          padding: 10px;
+        }
+        
+        .metric-value {
+          font-size: 16px;
+        }
+        
+        .property-title {
+          font-size: 16px;
+        }
+        
+        .repayment-table th,
+        .repayment-table td,
+        #be-table-steps th,
+        #be-table-steps td {
+          padding: 4px 1px;
+          font-size: 9px;
+        }
+
+        .ai-analysis-header h3 {
+          font-size: 18px;
+        }
+
+        .scores-grid {
+          grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+          gap: 8px;
+        }
+
+        .score-item {
+          padding: 8px 6px;
         }
 
         .btn {
-            padding: 18px 35px;
-            border: none;
-            border-radius: 15px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
+          padding: 12px 15px;
+          font-size: 13px;
         }
+      }
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
-        }
+      .metrics-grid input {
+        width: 100%;
+      }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.4);
-        }
-
-        .file-upload-area {
-            border: 3px dashed #cbd5e1;
-            border-radius: 20px;
-            padding: 60px 30px;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-        }
-
-        .file-upload-area:hover {
-            border-color: var(--primary);
-            background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%);
-        }
-
-        .file-upload-area.dragover {
-            border-color: var(--secondary);
-            background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
-            transform: scale(1.02);
-        }
-
-        .upload-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        .results-section {
-            display: none;
-            margin-top: 40px;
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        .results-section.active {
-            display: block;
-        }
-
-        .property-card {
-            background: linear-gradient(135deg, #f8fafc 0%, white 100%);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-            border: 1px solid #e2e8f0;
-            animation: slideUp 0.5s ease-out;
-        }
-
-        .property-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 25px;
-        }
-
-        .property-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 8px;
-        }
-
-        .property-address {
-            color: var(--gray);
-            font-size: 16px;
-        }
-
-        .value-badge {
-            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-size: 20px;
-            font-weight: 700;
-            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
-            animation: pulse 2s infinite;
-        }
-
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .metric-card {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
-        }
-
-        .metric-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        .metric-label {
-            color: var(--gray);
-            font-size: 14px;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .metric-value {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--dark);
-        }
-
-        .ai-analysis {
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-            color: white;
-            padding: 25px;
-            border-radius: 15px;
-            margin-top: 30px;
-            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
-        }
-
-        .ai-analysis h3 {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            font-size: 20px;
-        }
-
-        .ai-analysis p {
-            line-height: 1.6;
-            opacity: 0.95;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 40px;
-        }
-
-        .loading.active {
-            display: block;
-        }
-
-        .spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid var(--light);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        .chart-container {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: 20px;
-            height: 300px;
-        }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        @media (max-width: 768px) {
-            .container { padding: 15px; }
-            .main-card { padding: 25px; }
-            .url-input-group { flex-direction: column; }
-            .metrics-grid { grid-template-columns: 1fr; }
-            .property-header { flex-direction: column; gap: 15px; }
-        }
+      .results-section {
+        height: fit-content;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <div class="header">
-            <div class="logo">
-                <div class="logo-icon">🏠</div>
-                <h1>ImmoAI</h1>
-            </div>
+      <div class="header">
+        <div class="logo">
+          <div class="logo-icon">🏠</div>
+          <h1>ImmoAI</h1>
+        </div>
+      </div>
+
+      <div class="main-card">
+        <div class="input-section">
+          <div class="url-input-group">
+            <input
+              type="url"
+              class="url-input"
+              id="propertyUrl"
+              placeholder="Immobilien-URL eingeben (z.B. ImmobilienScout24, Immonet)"
+            />
+            <button class="btn btn-primary" onclick="analyzeUrl()">
+              <span>🔍</span>
+              <span>Analysieren</span>
+            </button>
+          </div>
         </div>
 
-        <div class="main-card">
-            <div class="input-section">
-                <div class="input-tabs">
-                    <button class="tab-btn active" onclick="switchTab('url')">
-                        🔗 URL eingeben
-                    </button>
-                    <button class="tab-btn" onclick="switchTab('file')">
-                        📄 Exposé hochladen
-                    </button>
-                </div>
-
-                <div class="input-area active" id="url-tab">
-                    <div class="url-input-group">
-                        <input type="url" 
-                               class="url-input" 
-                               id="propertyUrl"
-                               placeholder="Immobilien-URL eingeben (z.B. ImmobilienScout24, Immonet)">
-                        <button class="btn btn-primary" onclick="analyzeUrl()">
-                            <span>🔍</span>
-                            <span>Analysieren</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="input-area" id="file-tab">
-                    <div class="file-upload-area" 
-                         id="dropZone"
-                         ondrop="handleDrop(event)"
-                         ondragover="handleDragOver(event)"
-                         ondragleave="handleDragLeave(event)"
-                         onclick="document.getElementById('fileInput').click()">
-                        <div class="upload-icon">📤</div>
-                        <h3>Exposé hier ablegen</h3>
-                        <p>oder klicken zum Auswählen</p>
-                        <p style="margin-top: 10px; color: var(--gray); font-size: 14px;">
-                            PDF, JPG, PNG (max. 10MB)
-                        </p>
-                        <input type="file" 
-                               id="fileInput" 
-                               style="display: none;" 
-                               accept=".pdf,.jpg,.jpeg,.png"
-                               onchange="handleFileSelect(event)">
-                    </div>
-                </div>
-            </div>
-
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <h3>KI analysiert Immobilie...</h3>
-                <p style="color: var(--gray); margin-top: 10px;">Dies kann einen Moment dauern</p>
-            </div>
-
-            <div class="results-section" id="results">
-                <div class="property-card">
-                    <div class="property-header">
-                        <div>
-                            <h2 class="property-title" id="propertyTitle">Moderne 3-Zimmer Wohnung</h2>
-                            <p class="property-address" id="propertyAddress">Maxvorstadt, München</p>
-                        </div>
-                        <div class="value-badge" id="estimatedValue">
-                            €750.000
-                        </div>
-                    </div>
-
-                    <div class="metrics-grid">
-                        <div class="metric-card">
-                            <div class="metric-label">Wohnfläche</div>
-                            <div class="metric-value" id="livingSpace">85 m²</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-label">Zimmer</div>
-                            <div class="metric-value" id="rooms">3</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-label">Baujahr</div>
-                            <div class="metric-value" id="yearBuilt">2018</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-label">Preis/m²</div>
-                            <div class="metric-value" id="pricePerSqm">€8.823</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-label">Energieklasse</div>
-                            <div class="metric-value" id="energyClass">A+</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-label">Rendite</div>
-                            <div class="metric-value" id="yield">3.2%</div>
-                        </div>
-                    </div>
-
-                    <div class="ai-analysis">
-                        <h3>
-                            <span>🤖</span>
-                            <span>KI-Bewertung</span>
-                        </h3>
-                        <p id="aiAnalysis">
-                            Die Immobilie befindet sich in einer sehr guten Lage mit hervorragender Infrastruktur. 
-                            Der Kaufpreis liegt im marktüblichen Bereich. Die moderne Ausstattung und die 
-                            energieeffiziente Bauweise sprechen für eine positive Wertentwicklung. 
-                            Empfehlung: Kaufenswert bei Eigennutzung, moderate Rendite bei Vermietung.
-                        </p>
-                    </div>
-
-                    <div class="chart-container">
-                        <!-- BREAK-EVEN: Inputs -->
-                        <div class="property-card" id="breakeven-card" style="margin-top:20px;">
-                        <h3 style="margin-bottom:16px;">💸 Break-Even-Rechnung</h3>
-
-                        <div class="metrics-grid" style="margin-bottom:10px;">
-                            <div class="metric-card">
-                            <div class="metric-label">Kaufpreis (€)</div>
-                            <input id="be-price" type="number" class="url-input" min="0" step="1000" />
-                            </div>
-                            <div class="metric-card">
-                            <div class="metric-label">Eigenkapital (€)</div>
-                            <input id="be-equity" type="number" class="url-input" min="0" step="1000" value="0" />
-                            </div>
-                            <div class="metric-card">
-                            <div class="metric-label">Zinssatz p.a. (%)</div>
-                            <input id="be-interest" type="text" class="url-input" value="4,5" />
-                            </div>
-                            <div class="metric-card">
-                            <div class="metric-label">Anfängliche Tilgung p.a. (%)</div>
-                            <input id="be-redemption" type="text" class="url-input" value="2,0" />
-                            </div>
-                            <div class="metric-card">
-                            <div class="metric-label">Nicht uml. Kosten/Monat (€)</div>
-                            <input id="be-nuk" type="number" class="url-input" min="0" step="10" value="100" />
-                            </div>
-                            <div class="metric-card">
-                            <div class="metric-label">Annahme Laufzeit</div>
-                            <div class="metric-value">10 Jahre</div>
-                            </div>
-                        </div>
-
-                        <div class="metric-card" style="margin-bottom:16px;">
-                            <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
-                            <label style="font-weight:600;">Mietquelle:</label>
-                            <label><input type="radio" name="rent-source" value="listing" checked /> Inseratsmiete</label>
-                            <label><input type="radio" name="rent-source" value="mirror" /> Mietspiegel</label>
-                            <label><input type="radio" name="rent-source" value="combined" /> Inseratsmiete&nbsp;&amp;&nbsp;Mietspiegel</label>
-                            </div>
-
-                            <!-- Inseratsmiete -->
-                            <div id="rent-listing-wrap" style="display:flex; gap:10px; align-items:center; margin-top:10px;">
-                            <span>Inseratsmiete (kalt) €/Monat (gesamt):</span>
-                            <input id="be-rent-listing" type="number" class="url-input" min="0" step="10" value="0" style="max-width:200px;" />
-                            </div>
-
-                            <!-- Mietspiegel -->
-                            <div id="rent-mirror-wrap" style="display:none; gap:10px; align-items:center; margin-top:10px;">
-                            <span>Mietspiegel €/m²/Monat:</span>
-                            <input id="be-rent-per-sqm" type="text" class="url-input" value="12,0" style="max-width:120px;" />
-                            <span>Wohnfl. (m²):</span>
-                            <input id="be-living-space" type="number" class="url-input" min="0" step="1" value="0" style="max-width:120px;" />
-                            </div>
-
-                            <!-- Kombiniert -->
-                            <div id="rent-combined-wrap" style="display:none; gap:14px; align-items:center; flex-wrap:wrap; margin-top:10px;">
-                            <div style="display:flex; gap:10px; align-items:center;">
-                                <span>Inseratsmiete €/Monat (Summe):</span>
-                                <input id="be-rent-listing-comb" type="number" class="url-input" min="0" step="10" value="0" style="max-width:160px;" />
-                            </div>
-                            <div style="display:flex; gap:10px; align-items:center;">
-                                <span>Mietspiegel €/m²/Monat:</span>
-                                <input id="be-rent-per-sqm-comb" type="text" class="url-input" value="12,0" style="max-width:100px;" />
-                                <span>m² nach Mietspiegel:</span>
-                                <input id="be-sqm-comb" type="number" class="url-input" min="0" step="1" value="0" style="max-width:120px;" />
-                            </div>
-                            </div>
-
-                            <div style="margin-top:12px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                            <button class="btn btn-primary" id="be-calc-btn">Berechnen</button>
-                            <span style="color:var(--gray); font-size:14px;">
-                                Annuität = Darlehen × (Zins% + anfängliche Tilgung%). Zinsanteil sinkt jährlich, Tilgung steigt – Annuität bleibt konstant.
-                            </span>
-                            </div>
-                        </div>
-
-                        <div class="metrics-grid" style="margin-bottom:10px;">
-                            <div class="metric-card">
-                            <div class="metric-label">🧮 Monatliche Kreditrate</div>
-                            <div class="metric-value" id="be-monthly-rate">€0</div>
-                            </div>
-                            <div class="metric-card">
-                            <div class="metric-label">🏷️ Monatsmiete (netto kalt)</div>
-                            <div class="metric-value" id="be-monthly-rent">€0</div>
-                            </div>
-                            <div class="metric-card">
-                            <div class="metric-label">⚖️ Cashflow/Monat (nach nicht uml.)</div>
-                            <div class="metric-value" id="be-monthly-cf">€0</div>
-                            </div>
-                            <div class="metric-card">
-                            <div class="metric-label">📍 Break-Even (Jahr)</div>
-                            <div class="metric-value" id="be-year">–</div>
-                            </div>
-                        </div>
-
-                        <div class="chart-container">
-                            <canvas id="be-cashflow-chart"></canvas>
-                        </div>
-
-                        <div class="property-card" style="margin-top:16px;">
-                            <h4 style="margin-bottom:10px;">Tabellarische Übersicht (jährlich; Laufzeit 10 Jahre)</h4>
-                            <div style="overflow:auto; max-height:360px; border:1px solid #e2e8f0; border-radius:12px;">
-                            <table id="be-table" style="width:100%; border-collapse:collapse;">
-                                <thead style="position:sticky; top:0; background:#fff;">
-                                <tr>
-                                    <th style="padding:10px; border-bottom:1px solid #e2e8f0;">Jahr</th>
-                                    <th style="padding:10px; border-bottom:1px solid #e2e8f0;">Restschuld (Jahresanfang)</th>
-                                    <th style="padding:10px; border-bottom:1px solid #e2e8f0;">Zinsanteil</th>
-                                    <th style="padding:10px; border-bottom:1px solid #e2e8f0;">Tilgungsanteil</th>
-                                    <th style="padding:10px; border-bottom:1px solid #e2e8f0;">Annuität (Jahr)</th>
-                                    <th style="padding:10px; border-bottom:1px solid #e2e8f0;">Miete (Jahr)</th>
-                                    <th style="padding:10px; border-bottom:1px solid #e2e8f0;">Nicht uml. Kosten (Jahr)</th>
-                                    <th style="padding:10px; border-bottom:1px solid #e2e8f0;">Cashflow (Jahr)</th>
-                                    <th style="padding:10px; border-bottom:1px solid #e2e8f0;">Kumul. Cashflow</th>
-                                </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                            </div>
-                        </div>
-                        </div>
-                        <!-- ENDE BREAK-EVEN -->
-                        <canvas id="priceChart"></canvas>
-                    </div>
-                </div>
-            </div>
+        <div class="loading" id="loading">
+          <div class="spinner"></div>
+          <h3>KI analysiert Immobilie...</h3>
+          <p style="color: var(--gray); margin-top: 10px">
+            Dies kann einen Moment dauern
+          </p>
         </div>
+
+        <div class="results-section" id="results">
+          <div class="property-card">
+            <div class="property-header">
+              <div>
+                <a href="#" class="property-title" id="propertyTitle" target="_blank">
+                  Moderne 3-Zimmer Wohnung
+                </a>
+                <p class="property-address" id="propertyAddress">
+                  Maxvorstadt, München
+                </p>
+              </div>
+            </div>
+
+            <div class="metrics-grid">
+              <div class="metric-card price-card" id="priceCard">
+                <div class="metric-label">Kaufpreis</div>
+                <div class="metric-value" id="estimatedValue">€750.000</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Wohnfläche</div>
+                <div class="metric-value" id="livingSpace">85 m²</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Zimmer</div>
+                <div class="metric-value" id="rooms">3</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Baujahr</div>
+                <div class="metric-value" id="yearBuilt">2018</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Preis/m²</div>
+                <div class="metric-value" id="pricePerSqm">€8.823</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Energieklasse</div>
+                <div class="metric-value" id="energyClass">A+</div>
+              </div>
+            </div>
+
+            <div class="ai-analysis" id="aiAnalysisSection">
+              <div class="ai-analysis-header">
+                <h3>
+                  <span>🤖</span>
+                  <span>KI-Bewertung</span>
+                </h3>
+              </div>
+              <p id="aiAnalysis">
+                Die Immobilie befindet sich in einer sehr guten Lage mit
+                hervorragender Infrastruktur. Der Kaufpreis liegt im
+                marktüblichen Bereich. Die moderne Ausstattung und die
+                energieeffiziente Bauweise sprechen für eine positive
+                Wertentwicklung. Empfehlung: Kaufenswert bei Eigennutzung,
+                moderate Rendite bei Vermietung.
+              </p>
+            </div>
+            <div class="chart-container">
+              <!-- BREAK-EVEN -->
+              <div
+                class="property-card"
+                id="breakeven-card"
+                style="margin-top: 20px"
+              >
+                <h3 style="margin-bottom: 16px">💸 Break-Even-Rechnung</h3>
+
+                <div class="metrics-grid" style="margin-bottom: 10px">
+                  <div class="metric-card">
+                    <div class="metric-label">Kaufpreis (€)</div>
+                    <input
+                      id="be-price"
+                      type="number"
+                      class="url-input"
+                      min="0"
+                      step="1000"
+                    />
+                  </div>
+                  <div class="metric-card">
+                    <div class="metric-label">Eigenkapital (€)</div>
+                    <input
+                      id="be-equity"
+                      type="number"
+                      class="url-input"
+                      min="0"
+                      step="1000"
+                      value="0"
+                    />
+                  </div>
+                  <div class="metric-card">
+                    <div class="metric-label">Zinssatz p.a. (%)</div>
+                    <input
+                      id="be-interest"
+                      type="text"
+                      class="url-input"
+                      value="4,5"
+                    />
+                  </div>
+                  <div class="metric-card">
+                    <div class="metric-label">Anfängliche Tilgung p.a. (%)</div>
+                    <input
+                      id="be-redemption"
+                      type="text"
+                      class="url-input"
+                      value="1,0"
+                    />
+                  </div>
+
+                  <div class="metric-card">
+                    <div class="metric-label">Hausgeld €/Monat (optional)</div>
+                    <input
+                      id="be-hoa"
+                      type="number"
+                      class="url-input"
+                      min="0"
+                      step="10"
+                      placeholder=""
+                    />
+                  </div>
+
+                  <div class="metric-card">
+                    <div class="metric-label">Nicht uml. Kosten/Monat (€)</div>
+                    <input
+                      id="be-nuk"
+                      type="number"
+                      class="url-input"
+                      min="0"
+                      step="10"
+                      value="100"
+                    />
+                  </div>
+
+                  <div class="metric-card">
+                    <div class="metric-label">Annahme Laufzeit</div>
+                    <div class="metric-value">10 Jahre</div>
+                  </div>
+                </div>
+
+                <!-- Nebenkosten Kauf -->
+                <div class="metric-card" style="margin-bottom: 16px">
+                  <div
+                    style="
+                      display: flex;
+                      gap: 16px;
+                      align-items: center;
+                      flex-wrap: wrap;
+                    "
+                  >
+                    <strong>Nebenkosten:</strong>
+                    <label
+                      >Makler (%):
+                      <input
+                        id="be-broker-pct"
+                        type="text"
+                        class="url-input"
+                        style="max-width: 100px"
+                        placeholder=""
+                    /></label>
+                    <label
+                      >Notar/Grundbuch (%):
+                      <input
+                        id="be-notary-pct"
+                        type="text"
+                        class="url-input"
+                        style="max-width: 100px"
+                        value="2,0"
+                    /></label>
+                    <label
+                      >Bundesland:
+                      <select
+                        id="be-state"
+                        class="url-input"
+                        style="max-width: 220px"
+                      ></select>
+                    </label>
+                    <span
+                      id="be-grunderwerb-info"
+                      style="color: var(--gray); font-size: 14px"
+                    ></span>
+                  </div>
+                </div>
+
+                <!-- Mietquelle -->
+                <div class="metric-card" style="margin-bottom: 16px">
+                  <div
+                    style="
+                      display: flex;
+                      gap: 16px;
+                      align-items: center;
+                      flex-wrap: wrap;
+                    "
+                  >
+                    <label style="font-weight: 600">Mietquelle:</label>
+                    <label
+                      ><input
+                        type="radio"
+                        name="rent-source"
+                        value="listing"
+                        checked
+                      />
+                      Inseratsmiete</label
+                    >
+                    <label
+                      ><input type="radio" name="rent-source" value="mirror" />
+                      Mietspiegel</label
+                    >
+                    <label
+                      ><input
+                        type="radio"
+                        name="rent-source"
+                        value="combined"
+                      />
+                      Inseratsmiete&nbsp;&amp;&nbsp;Mietspiegel</label
+                    >
+                  </div>
+
+                  <!-- Inseratsmiete -->
+                  <div
+                    id="rent-listing-wrap"
+                    style="
+                      display: flex;
+                      gap: 10px;
+                      align-items: center;
+                      margin-top: 10px;
+                    "
+                  >
+                    <span>Inseratsmiete €/Monat (Summe):</span>
+                    <input
+                      id="be-rent-listing"
+                      type="number"
+                      class="url-input"
+                      min="0"
+                      step="10"
+                      placeholder="€/Monat"
+                      style="max-width: 160px"
+                    />
+                  </div>
+
+                  <!-- Mietspiegel via PLZ + Slider -->
+                  <div
+                    id="rent-mirror-wrap"
+                    style="
+                      display: none;
+                      gap: 12px;
+                      align-items: center;
+                      flex-wrap: wrap;
+                      margin-top: 10px;
+                    "
+                  >
+                    <label
+                      >PLZ:
+                      <input
+                        id="be-plz"
+                        type="text"
+                        class="url-input"
+                        maxlength="5"
+                        style="max-width: 110px"
+                      />
+                    </label>
+                    <button class="btn btn-primary" id="be-load-ms">
+                      Mietspiegel laden
+                    </button>
+                    <div
+                      id="ms-avg-pill"
+                      class="ms-pill"
+                      style="display: none; margin-top: 10px"
+                    >
+                      Ø — €/m²
+                    </div>
+                    <span
+                      id="be-ms-source"
+                      style="color: var(--gray); font-size: 14px"
+                    ></span>
+
+                    <div
+                      style="
+                        display: flex;
+                        gap: 10px;
+                        align-items: center;
+                        width: 100%;
+                        margin-top: 8px;
+                      "
+                    >
+                      <span>Range:</span>
+                      <input
+                        id="be-ms-range"
+                        type="range"
+                        min="0"
+                        max="100"
+                        step="1"
+                        value="50"
+                        style="flex: 1"
+                      />
+                      <span
+                        id="be-ms-val"
+                        style="min-width: 100px; text-align: right"
+                        >– €/m²</span
+                      >
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center">
+                      <span>Wohnfl. (m²):</span>
+                      <input
+                        id="be-living-space"
+                        type="number"
+                        class="url-input"
+                        min="0"
+                        step="1"
+                        value="0"
+                        style="max-width: 120px"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Kombiniert -->
+                  <div
+                    id="rent-combined-wrap"
+                    style="
+                      display: none;
+                      gap: 14px;
+                      align-items: center;
+                      flex-wrap: wrap;
+                      margin-top: 10px;
+                    "
+                  >
+                    <div>
+                      Inseratsmiete €/Monat (Summe):
+                      <input
+                        id="be-rent-listing-comb"
+                        type="number"
+                        class="url-input"
+                        min="0"
+                        step="10"
+                        placeholder="€/Monat"
+                        style="max-width: 160px"
+                      />
+                    </div>
+                    <div>
+                      PLZ:
+                      <input
+                        id="be-plz-comb"
+                        type="text"
+                        class="url-input"
+                        maxlength="5"
+                        style="max-width: 100px"
+                      />
+                      <button class="btn btn-primary" id="be-load-ms-comb">
+                        Mietspiegel laden
+                      </button>
+                    </div>
+                    <div
+                      style="
+                        display: flex;
+                        gap: 10px;
+                        align-items: center;
+                        width: 100%;
+                      "
+                    >
+                      <span>Range:</span>
+                      <input
+                        id="be-ms-range-comb"
+                        type="range"
+                        min="0"
+                        max="100"
+                        step="1"
+                        value="50"
+                        style="flex: 1"
+                      />
+                      <span
+                        id="be-ms-val-comb"
+                        style="min-width: 100px; text-align: right"
+                        >– €/m²</span
+                      >
+                      <span>m² nach Mietspiegel:</span>
+                      <input
+                        id="be-sqm-comb"
+                        type="number"
+                        class="url-input"
+                        min="0"
+                        step="1"
+                        value="0"
+                        style="max-width: 120px"
+                      />
+                    </div>
+                  </div>
+
+                  <div
+                    style="
+                      margin-top: 12px;
+                      display: flex;
+                      gap: 10px;
+                      align-items: center;
+                      flex-wrap: wrap;
+                    "
+                  >
+                    <button class="btn btn-primary" id="be-calc-btn">
+                      Berechnen
+                    </button>
+                    <span style="color: var(--gray); font-size: 14px"
+                      >Annuität = Darlehen × (Zins% + anfängliche Tilgung%).
+                      Laufzeit fix 10 Jahre.</span
+                    >
+                  </div>
+                </div>
+
+                <!-- KPIs -->
+                <div class="metrics-grid" style="margin-bottom: 10px">
+                  <div class="metric-card">
+                    <div class="metric-label">🧮 Monatliche Kreditrate</div>
+                    <div class="metric-value" id="be-monthly-rate">€0</div>
+                  </div>
+                  <div class="metric-card">
+                    <div class="metric-label">🏷️ Monatsmiete (netto kalt)</div>
+                    <div class="metric-value" id="be-monthly-rent">€0</div>
+                  </div>
+                  <div class="metric-card">
+                    <div class="metric-label">
+                      ⚖️ Cashflow/Monat (nach nicht uml.)
+                    </div>
+                    <div class="metric-value" id="be-monthly-cf">€0</div>
+                  </div>
+                  <div class="metric-card">
+                    <div class="metric-label">📈 Mietrendite (brutto)</div>
+                    <div class="metric-value" id="be-yield-gross">–</div>
+                  </div>
+                  <div class="metric-card">
+                    <div class="metric-label">📉 Mietrendite (netto)</div>
+                    <div class="metric-value" id="be-yield-net">–</div>
+                  </div>
+                </div>
+
+                <!-- Break-Even vs. Kaufpreis (5k-Schritte) -->
+                <div class="property-card" style="margin-top: 16px">
+                  <h4 style="margin-bottom: 6px">
+                    Breakevenpoint nach Kaufpreis
+                  </h4>
+                  <div
+                    style="
+                      display: flex;
+                      gap: 12px;
+                      align-items: center;
+                      margin: 8px 0 14px;
+                    "
+                  >
+                    <label style="font-weight: 600">Preis-Schritt (EUR):</label>
+                    <input
+                      id="be-step"
+                      type="number"
+                      class="url-input"
+                      min="1000"
+                      step="1000"
+                      value="5000"
+                      style="max-width: 160px"
+                    />
+                    <small>Tipp: 2.500 / 5.000 / 10.000</small>
+                  </div>
+                  <div
+                    id="be-fin-hint"
+                    style="
+                      margin: 6px 0 10px;
+                      color: var(--gray);
+                      font-size: 14px;
+                    "
+                  >
+                    <!-- wird per JS gefüllt -->
+                  </div>
+                  <div
+                    style="
+                      overflow: auto;
+                      max-height: 360px;
+                      border: 1px solid #e2e8f0;
+                      border-radius: 12px;
+                    "
+                  >
+                    <table
+                      id="be-table-steps"
+                      style="width: 100%; border-collapse: collapse"
+                    >
+                      <thead style="position: sticky; top: 0; background: #fff">
+                        <tr>
+                          <th>Kaufpreis</th>
+                          <th>Finanzierungssumme</th>
+                          <th>Monatliche Rate</th>
+                          <th>Kaltmiete</th>
+                          <th>Differenz</th>
+                        </tr>
+                      </thead>
+                      <tbody></tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Tilgungstabelle -->
+                <div class="property-card" style="margin-top: 30px">
+                  <h4 style="margin-bottom: 16px">📊 Tilgungsplan (40 Jahre)</h4>
+                  <div
+                    style="
+                      overflow: auto;
+                      max-height: 500px;
+                      border: 1px solid #e2e8f0;
+                      border-radius: 12px;
+                    "
+                  >
+                    <table class="repayment-table" id="repayment-table">
+                      <thead>
+                        <tr>
+                          <th>Jahr</th>
+                          <th>Restschuld (Anfang)</th>
+                          <th>Zinsen</th>
+                          <th>Tilgung</th>
+                          <th>Annuität</th>
+                          <th>Mieteinnahmen</th>
+                          <th>Cashflow</th>
+                          <th>Restschuld (Ende)</th>
+                        </tr>
+                      </thead>
+                      <tbody id="repayment-tbody">
+                        <!-- Wird von JavaScript gefüllt -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notizen -->
+            <div class="notes-section">
+              <h4 style="margin-bottom: 15px">📝 Bemerkungen & Notizen</h4>
+              <textarea
+                class="notes-field"
+                id="property-notes"
+                placeholder="Hier können Sie zusätzliche Informationen, Bewertungen oder wichtige Details zur Immobilie festhalten..."
+              ></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script>
-        // Tab-Switching
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.input-area').forEach(area => area.classList.remove('active'));
-            
-            if (tab === 'url') {
-                document.querySelectorAll('.tab-btn')[0].classList.add('active');
-                document.getElementById('url-tab').classList.add('active');
-            } else {
-                document.querySelectorAll('.tab-btn')[1].classList.add('active');
-                document.getElementById('file-tab').classList.add('active');
-            }
+      // Global variables
+      let currentPropertyUrl = '';
+
+      // URL-Analyse
+      async function analyzeUrl() {
+        const url = document.getElementById("propertyUrl").value;
+        if (!url) {
+          alert("Bitte geben Sie eine URL ein");
+          return;
         }
 
-        // URL-Analyse
-        async function analyzeUrl() {
-            const url = document.getElementById('propertyUrl').value;
-            if (!url) {
-                alert('Bitte geben Sie eine URL ein');
-                return;
-            }
+        currentPropertyUrl = url;
+        showLoading();
 
-            showLoading();
-            
-            try {
-                const response = await fetch('http://localhost:3001/api/analyze-url', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ url })
-                });
-
-                const data = await response.json();
-                displayResults(data);
-            } catch (error) {
-                console.error('Fehler:', error);
-                alert('Fehler bei der Analyse. Bitte versuchen Sie es erneut.');
-            } finally {
-                hideLoading();
+        try {
+          const response = await fetch(
+            "http://localhost:3001/api/analyze-url",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ url }),
             }
+          );
+
+          const data = await response.json();
+          displayResults(data);
+        } catch (error) {
+          console.error("Fehler:", error);
+          alert("Fehler bei der Analyse. Bitte versuchen Sie es erneut.");
+        } finally {
+          hideLoading();
+        }
+      }
+
+      // Display Results
+      function displayResults(data) {
+        // Set title as clickable link
+        const titleElement = document.getElementById("propertyTitle");
+        titleElement.textContent = data.title || "Immobilie";
+        titleElement.href = currentPropertyUrl;
+        
+        document.getElementById("propertyAddress").textContent =
+          data.address || "Standort";
+        document.getElementById("estimatedValue").textContent = `€${(
+          data.estimatedValue || 0
+        ).toLocaleString("de-DE")}`;
+        document.getElementById("livingSpace").textContent = `${
+          data.livingSpace || 0
+        } m²`;
+        document.getElementById("rooms").textContent = data.rooms || "-";
+        document.getElementById("yearBuilt").textContent =
+          data.yearBuilt || "-";
+        document.getElementById("pricePerSqm").textContent = `€${(
+          data.pricePerSqm || 0
+        ).toLocaleString("de-DE")}`;
+        document.getElementById("energyClass").textContent =
+          data.energyClass || "-";
+        document.getElementById("aiAnalysis").innerHTML = renderAI(data);
+        document.getElementById("results").classList.add("active");
+
+        // Prefill Break-Even data
+        document.getElementById("be-price").value = Math.round(
+          data.estimatedValue || 0
+        );
+        const sqm =
+          Number((data.livingSpace || "0").toString().replace(",", ".")) || 0;
+        if (data.estimatedValue > 0) {
+          runBreakEven();
+        }
+        document.getElementById("be-living-space").value = Math.round(sqm);
+
+        // Try to extract PLZ from address
+        const addr = data.address || "";
+        const zip = (addr.match(/\b\d{5}\b/) || [])[0];
+        if (zip) {
+          document.getElementById("be-plz").value = zip;
+          document.getElementById("be-plz-comb").value = zip;
         }
 
-        // File Upload Handling
-        function handleDragOver(e) {
-            e.preventDefault();
-            document.getElementById('dropZone').classList.add('dragover');
-        }
+        // Auto-load Mietspiegel and then calculate
+        tryAutoLoadMietspiegel(zip).then(() => runBreakEven());
 
-        function handleDragLeave(e) {
-            e.preventDefault();
-            document.getElementById('dropZone').classList.remove('dragover');
-        }
+        // Set rent if available
+        const rentMonthly =
+          data.rentMonthly || (data.rentAnnual ? data.rentAnnual / 12 : null);
+        document.getElementById("be-rent-listing").value = rentMonthly
+          ? Math.round(rentMonthly)
+          : "";
 
-        function handleDrop(e) {
-            e.preventDefault();
-            document.getElementById('dropZone').classList.remove('dragover');
-            
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                uploadFile(files[0]);
-            }
-        }
+        runBreakEven();
+      }
 
-        function handleFileSelect(e) {
-            const file = e.target.files[0];
-            if (file) {
-                uploadFile(file);
-            }
-        }
+      function badge(txt) {
+        return `<span style="display:inline-block;padding:2px 8px;border-radius:999px;background:#eef2ff;color:#4338ca;font-weight:600;margin-left:6px;">${txt}</span>`;
+      }
 
-        async function uploadFile(file) {
-            if (file.size > 10 * 1024 * 1024) {
-                alert('Datei ist zu groß (max. 10MB)');
-                return;
-            }
+      function renderAI(d) {
+        const a =
+          d && d.analysis && typeof d.analysis === "object" ? d.analysis : d;
+        if (!a || typeof a !== "object")
+          return d.analysis || d || "Keine Analyse verfügbar";
 
-            showLoading();
-            
-            const formData = new FormData();
-            formData.append('file', file);
+        const s = a.scores || {};
+        const v = a.valuation || {};
+        const r = a.returns || {};
+        const rent = a.rental || {};
 
-            try {
-                const response = await fetch('http://localhost:3001/api/analyze-file', {
-                    method: 'POST',
-                    body: formData
-                });
+        const over =
+          v.over_under_pricing_pct != null
+            ? `${v.over_under_pricing_pct.toFixed(1).replace(".", ",")}%`
+            : "–";
+        const verdict =
+          v.over_under_pricing_pct != null
+            ? v.over_under_pricing_pct < -5
+              ? "unter Marktpreis"
+              : v.over_under_pricing_pct > 5
+              ? "über Marktpreis"
+              : "nah am Markt"
+            : "unbekannt";
 
-                const data = await response.json();
-                displayResults(data);
-            } catch (error) {
-                console.error('Fehler:', error);
-                alert('Fehler beim Upload. Bitte versuchen Sie es erneut.');
-            } finally {
-                hideLoading();
-            }
-        }
+        const verdictClass =
+          v.over_under_pricing_pct < -5
+            ? "good"
+            : v.over_under_pricing_pct > 5
+            ? "warning"
+            : "neutral";
 
-        // Display Results
-        function displayResults(data) {
-            document.getElementById('propertyTitle').textContent = data.title || 'Immobilie';
-            document.getElementById('propertyAddress').textContent = data.address || 'Standort';
-            document.getElementById('estimatedValue').textContent = `€${(data.estimatedValue || 0).toLocaleString('de-DE')}`;
-            document.getElementById('livingSpace').textContent = `${data.livingSpace || 0} m²`;
-            document.getElementById('rooms').textContent = data.rooms || '-';
-            document.getElementById('yearBuilt').textContent = data.yearBuilt || '-';
-            document.getElementById('pricePerSqm').textContent = `€${(data.pricePerSqm || 0).toLocaleString('de-DE')}`;
-            document.getElementById('energyClass').textContent = data.energyClass || '-';
-            document.getElementById('yield').textContent = `${data.yield || 0}%`;
-            document.getElementById('aiAnalysis').textContent = data.aiAnalysis || 'Keine Analyse verfügbar';
+        return `
+        <div class="ai-summary">
+            <p class="ai-summary-text">
+                <strong>Fazit:</strong> ${
+                  a.summary || "Keine Zusammenfassung verfügbar"
+                } 
+                <span class="verdict-badge ${verdictClass}">${verdict}</span>
+            </p>
+        </div>
 
-            document.getElementById('results').classList.add('active');
-            
-            // Chart erstellen
-            createPriceChart(data);
-        }
+        <div class="ai-scores">
+            <h4>Bewertungskriterien</h4>
+            <div class="scores-grid">
+                <div class="score-item">
+                    <div class="score-label">Lage</div>
+                    <div class="score-value">${s.location ?? "–"}/10</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">Zustand</div>
+                    <div class="score-value">${
+                      s.building_condition ?? "–"
+                    }/10</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">Energie</div>
+                    <div class="score-value">${s.energy || "–"}</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">Preis/Leistung</div>
+                    <div class="score-value">${
+                      s.value_for_money ?? "–"
+                    }/10</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">Mietsicherheit</div>
+                    <div class="score-value">${s.rent_security ?? "–"}/10</div>
+                </div>
+            </div>
+        </div>
 
-        function createPriceChart(data) {
-            const ctx = document.getElementById('priceChart').getContext('2d');
-            
-            // Destroy existing chart if it exists
-            if (window.priceChartInstance) {
-                window.priceChartInstance.destroy();
-            }
-            
-            window.priceChartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['2020', '2021', '2022', '2023', '2024'],
-                    datasets: [{
-                        label: 'Preisentwicklung',
-                        data: data.priceHistory || [650000, 680000, 720000, 740000, 750000],
-                        borderColor: '#6366f1',
-                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        title: {
-                            display: true,
-                            text: 'Geschätzte Preisentwicklung',
-                            font: {
-                                size: 16,
-                                weight: '600'
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: false,
-                            ticks: {
-                                callback: function(value) {
-                                    return '€' + value.toLocaleString('de-DE');
-                                }
-                            }
-                        }
-                    }
+        <div class="ai-details">
+            <div class="detail-section">
+                <h4>💰 Bewertung</h4>
+                <div class="detail-row">
+                    <span class="detail-label">Preis:</span>
+                    <span class="detail-value">${
+                      v.asking_price_eur
+                        ? "€" + v.asking_price_eur.toLocaleString("de-DE")
+                        : "–"
+                    }</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Fair Value:</span>
+                    <span class="detail-value">${
+                      v.fair_value_low_eur
+                        ? "€" + v.fair_value_low_eur.toLocaleString("de-DE")
+                        : "–"
+                    } – ${
+          v.fair_value_high_eur
+            ? "€" + v.fair_value_high_eur.toLocaleString("de-DE")
+            : "–"
+        }</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Abweichung:</span>
+                    <span class="detail-value">${over}</span>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h4>🏠 Miete & Rendite</h4>
+                <div class="detail-row">
+                    <span class="detail-label">Aktuelle Miete:</span>
+                    <span class="detail-value">${
+                      rent.current_rent_monthly_eur != null
+                        ? "€" +
+                          Math.round(
+                            rent.current_rent_monthly_eur
+                          ).toLocaleString("de-DE")
+                        : "–"
+                    } / Monat</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Marktmiete:</span>
+                    <span class="detail-value">${
+                      rent.market_rent_monthly_eur != null
+                        ? "€" +
+                          Math.round(
+                            rent.market_rent_monthly_eur
+                          ).toLocaleString("de-DE")
+                        : "–"
+                    } / Monat</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Bruttorendite:</span>
+                    <span class="detail-value">${
+                      r.gross_yield_pct != null
+                        ? r.gross_yield_pct.toFixed(2).replace(".", ",") + " %"
+                        : "–"
+                    }</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Nettorendite:</span>
+                    <span class="detail-value">${
+                      r.net_yield_pct != null
+                        ? r.net_yield_pct.toFixed(2).replace(".", ",") + " %"
+                        : "–"
+                    }</span>
+                </div>
+            </div>
+        </div>
+
+        ${
+          a.pros?.length ||
+          a.cons?.length ||
+          a.red_flags?.length ||
+          a.actions?.length
+            ? `
+        <div class="ai-lists">
+            <div class="lists-grid">
+                ${
+                  a.pros?.length
+                    ? `
+                <div class="list-section pros">
+                    <h4>✅ Pluspunkte</h4>
+                    <ul>${(a.pros || [])
+                      .map((x) => `<li>${x}</li>`)
+                      .join("")}</ul>
+                </div>`
+                    : ""
                 }
-            });
+                
+                ${
+                  a.cons?.length
+                    ? `
+                <div class="list-section cons">
+                    <h4>❌ Nachteile</h4>
+                    <ul>${(a.cons || [])
+                      .map((x) => `<li>${x}</li>`)
+                      .join("")}</ul>
+                </div>`
+                    : ""
+                }
+                
+                ${
+                  a.red_flags?.length
+                    ? `
+                <div class="list-section red-flags">
+                    <h4>🚨 Red Flags</h4>
+                    <ul>${(a.red_flags || [])
+                      .map((x) => `<li>${x}</li>`)
+                      .join("")}</ul>
+                </div>`
+                    : ""
+                }
+                
+                ${
+                  a.actions?.length
+                    ? `
+                <div class="list-section actions">
+                    <h4>📋 Empfehlungen</h4>
+                    <ul>${(a.actions || [])
+                      .map((x) => `<li>${x}</li>`)
+                      .join("")}</ul>
+                </div>`
+                    : ""
+                }
+            </div>
+        </div>`
+            : ""
         }
 
-        function showLoading() {
-            document.getElementById('loading').classList.add('active');
-            document.getElementById('results').classList.remove('active');
-        }
+        <div class="confidence-footer">
+            Confidence: ${
+              a.confidence != null
+                ? (a.confidence * 100).toFixed(0) + " %"
+                : "–"
+            }
+            ${rent.notes ? ` • ${rent.notes}` : ""}
+        </div>
+    `;
+      }
 
-        function hideLoading() {
-            document.getElementById('loading').classList.remove('active');
-        }
+      function showLoading() {
+        document.getElementById("loading").classList.add("active");
+        document.getElementById("results").classList.remove("active");
+      }
 
-        // Demo-Daten für Entwicklung (später entfernen)
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            console.log('Demo-Modus aktiv - Nutze Beispieldaten für Tests');
-        }
+      function hideLoading() {
+        document.getElementById("loading").classList.remove("active");
+      }
     </script>
+
     <script>
-    /* ===== Break-Even Rechner v2 (10 Jahre, kombinierte Miete) ===== */
+      // Break-Even calculations and all related functionality
+      const TERM_YEARS = 10;
+      const UMLAGEANTEIL_HAUSGELD = 0.7;
 
-    let beChart;
-    const TERM_YEARS = 10;
+      const landTaxRates = {
+        "Baden-Württemberg": 5.0,
+        Bayern: 3.5,
+        Berlin: 6.0,
+        Brandenburg: 6.5,
+        Bremen: 5.0,
+        Hamburg: 5.5,
+        Hessen: 6.0,
+        "Mecklenburg-Vorpommern": 6.0,
+        Niedersachsen: 5.0,
+        "Nordrhein-Westfalen": 6.5,
+        "Rheinland-Pfalz": 5.0,
+        Saarland: 6.5,
+        Sachsen: 3.5,
+        "Sachsen-Anhalt": 5.0,
+        "Schleswig-Holstein": 6.5,
+        Thüringen: 6.5,
+      };
 
-    // robustes Parsing (Akzeptiert "3,5" und "3.5")
-    const parsePct = (v) => {
-    if (v == null) return 0;
-    const s = String(v).trim().replace('%','').replace('.','').replace(',','.');
-    // Sonderfall: "3,5" -> "35"? Wir haben oben "." bereits entfernt, also besser:
-    // Alternative: erst Komma -> Punkt, dann NICHT die Punkte entfernen, sondern nur Tausender:
-    // Aber Input ist kurz, daher:
-    const n = Number(s);
-    return isNaN(n) ? 0 : n;
-    };
-    const parseNum = (v) => {
-    if (v == null) return 0;
-    const s = String(v).trim().replace(/\./g,'').replace(',','.');
-    const n = Number(s);
-    return isNaN(n) ? 0 : n;
-    };
-    const byId = (id) => document.getElementById(id);
-    const fmtEUR = (n) => '€' + (Math.round(n).toLocaleString('de-DE'));
+      const byId = (id) => document.getElementById(id);
+      const fmtEUR = (n) => "€" + Math.round(n).toLocaleString("de-DE");
+      const parsePct = (v) => {
+        if (v == null) return 0;
+        const s = String(v)
+          .trim()
+          .replace("%", "")
+          .replace(/\./g, "")
+          .replace(",", ".");
+        const n = Number(s);
+        return isNaN(n) ? 0 : n;
+      };
+      const parseNum = (v) => {
+        if (v == null) return 0;
+        const s = String(v).trim().replace(/\./g, "").replace(",", ".");
+        const n = Number(s);
+        return isNaN(n) ? 0 : n;
+      };
 
-    // Umschalten Mietquelle
-    document.addEventListener('change', (e) => {
-    if (e.target.name === 'rent-source') {
-        const val = e.target.value;
-        byId('rent-listing-wrap').style.display  = (val === 'listing')   ? 'flex' : 'none';
-        byId('rent-mirror-wrap').style.display   = (val === 'mirror')    ? 'flex' : 'none';
-        byId('rent-combined-wrap').style.display = (val === 'combined')  ? 'flex' : 'none';
-    }
-    });
+      // Fill state dropdown
+      (function fillStates() {
+        const sel = byId("be-state");
+        if (!sel) return;
+        sel.innerHTML =
+          '<option value="">– auswählen –</option>' +
+          Object.keys(landTaxRates)
+            .map((s) => `<option value="${s}">${s}</option>`)
+            .join("");
+      })();
 
-    byId('be-calc-btn').addEventListener('click', runBreakEven);
+      // Mietspiegel functions
+      async function loadMietspiegel(plz, els) {
+        if (!plz || plz.length !== 5) {
+          alert("Bitte gültige PLZ eingeben");
+          return;
+        }
+        try {
+          const r = await fetch(
+            "http://localhost:3001/api/mietspiegel-by-plz",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ plz }),
+            }
+          );
+          const data = await r.json();
+          if (!data || !data.ok) throw new Error(data?.error || "Keine Daten");
 
-    function buildSchedule({ loan, interestPct, redeemPct, startMonthlyRent, monthlyNonAlloc }) {
-    const i = interestPct / 100;
-    const t = redeemPct / 100;
-    const annYear = loan * (i + t);     // konstant p.a.
-    const annMonth = annYear / 12;
+          setMietspiegelAverage(data);
 
-    let rest = loan;
-    const rows = [];
-    let cumCF = 0;
-    let beYear = null;
+          const low = data.rangeLow;
+          const high = data.rangeHigh;
+          const avg = data.avgPerSqm || (low + high) / 2;
 
-    for (let y = 1; y <= TERM_YEARS; y++) {
-        const rentYear = startMonthlyRent * 12;
-        const nonAllocYear = monthlyNonAlloc * 12;
+          const setVal = (percent) => {
+            const val = low + (high - low) * (percent / 100);
+            els.valueLabel.textContent =
+              val.toFixed(2).replace(".", ",") + " €/m²";
+            els._currentEurPerSqm = val;
+          };
 
-        const interestY = rest * i;
-        const redemptionY = Math.min(annYear - interestY, rest);
-        const endRest = Math.max(rest - redemptionY, 0);
+          const avgPosition = ((avg - low) / (high - low)) * 100;
+          const clampedAvgPosition = Math.max(0, Math.min(100, avgPosition));
 
-        const cfYear = rentYear - annYear - nonAllocYear;
-        cumCF += cfYear;
+          if (data.state && landTaxRates[data.state]) {
+            byId("be-state").value = data.state;
+            byId("be-grunderwerb-info").textContent = `GrESt ${
+              landTaxRates[data.state]
+            }% (${data.state})`;
+          }
 
-        if (beYear === null && cfYear >= 0) beYear = y;
+          els.range.disabled = false;
+          els.range.oninput = () => setVal(Number(els.range.value));
 
-        rows.push({
-        year: y,
-        restStart: rest,
-        interestY,
-        redemptionY,
-        annYear,
-        rentYear,
-        nonAllocYear,
-        cfYear,
-        cumCF,
-        restEnd: endRest
+          els.range.value = clampedAvgPosition;
+          setVal(clampedAvgPosition);
+
+          if (els.sourceLabel)
+            els.sourceLabel.textContent = `Quelle: ${data.source} (${
+              data.city || ""
+            })`;
+          return data;
+        } catch (e) {
+          console.error(e);
+          alert("Mietspiegel konnte nicht geladen werden.");
+        }
+      }
+
+      // Auto-load Mietspiegel
+      let _msCache = { plz: null };
+
+      async function tryAutoLoadMietspiegel(plzOpt) {
+        const plz = (
+          plzOpt ||
+          byId("be-plz")?.value ||
+          byId("be-plz-comb")?.value ||
+          ""
+        ).trim();
+
+        if (!plz || plz.length !== 5) return;
+        if (_msCache.plz === plz) return;
+
+        const data = await loadMietspiegel(plz, {
+          range: byId("be-ms-range"),
+          valueLabel: byId("be-ms-val"),
+          sourceLabel: byId("be-ms-source"),
+        });
+        if (!data) return;
+
+        _msCache = { plz };
+
+        if (byId("be-ms-range-comb") && byId("be-ms-val-comb")) {
+          const low = data.rangeLow;
+          const high = data.rangeHigh;
+          const avg = data.avgPerSqm || (low + high) / 2;
+
+          const avgPosition = ((avg - low) / (high - low)) * 100;
+          const clampedAvgPosition = Math.max(0, Math.min(100, avgPosition));
+
+          byId("be-ms-range-comb").disabled = false;
+          byId("be-ms-range-comb").value = clampedAvgPosition;
+          byId("be-ms-val-comb").textContent =
+            avg.toFixed(2).replace(".", ",") + " €/m²";
+        }
+      }
+
+      // Calculation functions
+      function annRateMonth(loan, iPct, tPct) {
+        const i = iPct / 100,
+          t = tPct / 100;
+        return (loan * (i + t)) / 12;
+      }
+
+      function buildSchedule({
+        loan,
+        interestPct,
+        redeemPct,
+        monthlyRent,
+        monthlyNonAlloc,
+      }) {
+        const i = interestPct / 100,
+          t = redeemPct / 100;
+        const annYear = loan * (i + t),
+          annMonth = annYear / 12;
+        let rest = loan,
+          rows = [],
+          cumCF = 0,
+          beYear = null;
+        for (let y = 1; y <= TERM_YEARS; y++) {
+          const rentYear = monthlyRent * 12;
+          const nonAllocYear = monthlyNonAlloc * 12;
+          const interestY = rest * i;
+          const redemptionY = Math.min(annYear - interestY, rest);
+          const endRest = Math.max(rest - redemptionY, 0);
+          const cfYear = rentYear - annYear - nonAllocYear;
+          cumCF += cfYear;
+          if (beYear === null && cfYear >= 0) beYear = y;
+          rows.push({
+            year: y,
+            restStart: rest,
+            interestY,
+            redemptionY,
+            annYear,
+            rentYear,
+            nonAllocYear,
+            cfYear,
+            cumCF,
+            restEnd: endRest,
+          });
+          rest = endRest;
+          if (rest <= 0) break;
+        }
+        return { rows, annMonth, beYear };
+      }
+
+      // Build extended repayment schedule for 40 years (in 5-year steps)
+      function buildExtendedSchedule({
+        loan,
+        interestPct,
+        redeemPct,
+        monthlyRent,
+        monthlyNonAlloc,
+        monthlyHoa,
+      }) {
+        const i = interestPct / 100;
+        const annualRate = loan * (i + redeemPct / 100);
+        let remainingDebt = loan;
+        let rows = [];
+        
+        for (let year = 5; year <= 40; year += 5) {
+          let yearlyInterest = 0;
+          let yearlyRedemption = 0;
+          let startDebt = remainingDebt;
+          
+          // Calculate 5 years at once
+          for (let y = year - 4; y <= year; y++) {
+            if (remainingDebt <= 0) break;
+            
+            const interest = remainingDebt * i;
+            const redemption = Math.min(annualRate - interest, remainingDebt);
+            
+            yearlyInterest += interest;
+            yearlyRedemption += redemption;
+            remainingDebt = Math.max(remainingDebt - redemption, 0);
+          }
+          
+          const rentIncome = monthlyRent * 12 * 5; // 5 years
+          const totalCosts = (monthlyNonAlloc + (monthlyHoa || 0)) * 12 * 5; // 5 years
+          const totalAnnuity = annualRate * 5; // 5 years
+          const cashflow = rentIncome - totalAnnuity - totalCosts;
+          
+          rows.push({
+            year: year,
+            startDebt: startDebt,
+            interest: yearlyInterest,
+            redemption: yearlyRedemption,
+            annuity: totalAnnuity,
+            rentIncome: rentIncome,
+            cashflow: cashflow,
+            endDebt: remainingDebt
+          });
+          
+          if (remainingDebt <= 0) break;
+        }
+        
+        return rows;
+      }
+
+      function currentMonthlyRent() {
+        const src =
+          [...document.getElementsByName("rent-source")].find((r) => r.checked)
+            ?.value || "listing";
+        if (src === "listing") {
+          return parseNum(byId("be-rent-listing").value);
+        } else if (src === "mirror") {
+          const eurSqm = (byId("be-ms-val").textContent || "")
+            .replace(/[^\d,\.]/g, "")
+            .replace(",", ".");
+          const sqm = parseNum(byId("be-living-space").value);
+          return (Number(eurSqm) || 0) * sqm;
+        } else {
+          const listing = parseNum(byId("be-rent-listing-comb").value);
+          const eurSqm = (byId("be-ms-val-comb").textContent || "")
+            .replace(/[^\d,\.]/g, "")
+            .replace(",", ".");
+          const sqm = parseNum(byId("be-sqm-comb").value);
+          return listing + (Number(eurSqm) || 0) * sqm;
+        }
+      }
+
+      function calcYields(monthlyRent, price) {
+        const annual = monthlyRent * 12;
+        const gross = price > 0 ? (annual / price) * 100 : 0;
+        const notAlloc = parseNum(byId("be-nuk").value);
+        const hoa = parseNum(byId("be-hoa").value);
+        const notAllocHoa = hoa * (1 - UMLAGEANTEIL_HAUSGELD);
+        const netAnnual = (monthlyRent - notAlloc - notAllocHoa) * 12;
+        const net = price > 0 ? (netAnnual / price) * 100 : 0;
+        return { gross, net };
+      }
+
+      function runBreakEven() {
+        const price = parseNum(byId("be-price").value);
+        let equity = parseNum(byId("be-equity").value);
+        equity = Math.max(0, equity || 0);
+
+        if (!(price > 0)) return;
+
+        const iPct = parsePct(byId("be-interest").value);
+        const tPct = parsePct(byId("be-redemption").value);
+        const notAlloc = parseNum(byId("be-nuk").value);
+        const hoa = parseNum(byId("be-hoa").value);
+        const monthlyRent = currentMonthlyRent();
+
+        const loan = price - equity;
+
+        if (!(loan > 0)) {
+          byId("be-monthly-rate").textContent = "–";
+          byId("be-monthly-rent").textContent = fmtEUR(monthlyRent || 0);
+          byId("be-monthly-cf").textContent = "–";
+          byId("be-yield-gross").textContent = "–";
+          byId("be-yield-net").textContent = "–";
+          byId("be-fin-hint").textContent = "";
+          const tbody = byId("be-table-steps").querySelector("tbody");
+          if (tbody) tbody.innerHTML = "";
+          
+          // Clear repayment table
+          const repaymentTbody = byId("repayment-tbody");
+          if (repaymentTbody) repaymentTbody.innerHTML = "";
+          
+          return;
+        }
+
+        const { annMonth } = buildSchedule({
+          loan,
+          interestPct: iPct,
+          redeemPct: tPct,
+          monthlyRent,
+          monthlyNonAlloc: notAlloc,
         });
 
-        rest = endRest;
-        if (rest <= 0) break;
-    }
+        const monthlyCF = monthlyRent - annMonth - notAlloc;
+        byId("be-monthly-rate").textContent = fmtEUR(annMonth);
+        byId("be-monthly-rent").textContent = fmtEUR(monthlyRent);
+        byId("be-monthly-cf").textContent = fmtEUR(monthlyCF);
 
-    return { rows, annMonth, beYear };
-    }
+        const { gross, net } = calcYields(monthlyRent, price);
+        byId("be-yield-gross").textContent =
+          gross.toFixed(2).replace(".", ",") + " %";
+        byId("be-yield-net").textContent =
+          net.toFixed(2).replace(".", ",") + " %";
 
-    function currentMonthlyRent() {
-    const source = [...document.getElementsByName('rent-source')]
-        .find(r => r.checked)?.value || 'listing';
+        const ancPct = currentAncillaryPct();
+        const stepInput = byId("be-step");
+        const step = Math.max(
+          1000,
+          parseNum(stepInput ? stepInput.value : 5000) || 5000
+        );
 
-    if (source === 'listing') {
-        return parseNum(byId('be-rent-listing').value);
-    }
-    if (source === 'mirror') {
-        const perSqm = parseNum(byId('be-rent-per-sqm').value);
-        const sqm    = parseNum(byId('be-living-space').value);
-        return perSqm * sqm;
-    }
-    // combined
-    const listing = parseNum(byId('be-rent-listing-comb').value);
-    const perSqmC = parseNum(byId('be-rent-per-sqm-comb').value);
-    const sqmC    = parseNum(byId('be-sqm-comb').value);
-    return listing + perSqmC * sqmC;
-    }
+        renderStepsTable({
+          basePrice: price,
+          equity,
+          iPct,
+          tPct,
+          monthlyRent,
+          ancPct,
+          step,
+        });
 
-    function runBreakEven() {
-    const price   = parseNum(byId('be-price').value);
-    const equity  = parseNum(byId('be-equity').value);
-    const loan    = Math.max(price - equity, 0);
+        // Render repayment table
+        renderRepaymentTable({
+          loan,
+          interestPct: iPct,
+          redeemPct: tPct,
+          monthlyRent,
+          monthlyNonAlloc: notAlloc,
+          monthlyHoa: hoa,
+        });
+      }
 
-    const interestPct = parsePct(byId('be-interest').value);
-    const redeemPct   = parsePct(byId('be-redemption').value);
-    const monthlyNonAlloc = parseNum(byId('be-nuk').value);
+      // Render repayment table for 40 years in 5-year steps
+      function renderRepaymentTable({
+        loan,
+        interestPct,
+        redeemPct,
+        monthlyRent,
+        monthlyNonAlloc,
+        monthlyHoa,
+      }) {
+        const tbody = byId("repayment-tbody");
+        if (!tbody) return;
 
-    const monthlyRent = currentMonthlyRent();
+        tbody.innerHTML = "";
 
-    if (loan <= 0) {
-        alert('Bitte Kaufpreis und Eigenkapital so setzen, dass ein Darlehen > 0 entsteht.');
-        return;
-    }
+        const schedule = buildExtendedSchedule({
+          loan,
+          interestPct,
+          redeemPct,
+          monthlyRent,
+          monthlyNonAlloc,
+          monthlyHoa: monthlyHoa || 0,
+        });
 
-    const { rows, annMonth, beYear } = buildSchedule({
-        loan, interestPct, redeemPct,
-        startMonthlyRent: monthlyRent,
-        monthlyNonAlloc
-    });
+        schedule.forEach((row) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>Jahr ${row.year}</td>
+            <td>${fmtEUR(row.startDebt)}</td>
+            <td>${fmtEUR(row.interest)}</td>
+            <td>${fmtEUR(row.redemption)}</td>
+            <td>${fmtEUR(row.annuity)}</td>
+            <td>${fmtEUR(row.rentIncome)}</td>
+            <td style="color:${row.cashflow >= 0 ? '#059669' : '#ef4444'}">${fmtEUR(row.cashflow)}</td>
+            <td>${fmtEUR(row.endDebt)}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
 
-    const monthlyCF = monthlyRent - annMonth - monthlyNonAlloc;
+      function renderStepsTable({
+        basePrice,
+        equity,
+        iPct,
+        tPct,
+        monthlyRent,
+        ancPct,
+        step,
+      }) {
+        const tbody = byId("be-table-steps").querySelector("tbody");
+        tbody.innerHTML = "";
 
-    byId('be-monthly-rate').textContent = fmtEUR(annMonth);
-    byId('be-monthly-rent').textContent = fmtEUR(monthlyRent);
-    byId('be-monthly-cf').textContent   = fmtEUR(monthlyCF);
-    byId('be-year').textContent         = beYear ? beYear : '–';
-
-    renderTable(rows);
-    renderCFChart(rows);
-    }
-
-    function renderTable(rows) {
-    const tbody = document.querySelector('#be-table tbody');
-    tbody.innerHTML = '';
-    rows.forEach(r => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-        <td>${r.year}</td>
-        <td>${fmtEUR(r.restStart)}</td>
-        <td>${fmtEUR(r.interestY)}</td>
-        <td>${fmtEUR(r.redemptionY)}</td>
-        <td>${fmtEUR(r.annYear)}</td>
-        <td>${fmtEUR(r.rentYear)}</td>
-        <td>${fmtEUR(r.nonAllocYear)}</td>
-        <td style="color:${r.cfYear>=0?'#059669':'#ef4444'}">${fmtEUR(r.cfYear)}</td>
-        <td>${fmtEUR(r.cumCF)}</td>
-        `;
-        tbody.appendChild(tr);
-    });
-    }
-
-    function renderCFChart(rows) {
-    const ctx = document.getElementById('be-cashflow-chart').getContext('2d');
-    if (beChart) beChart.destroy();
-
-    beChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-        labels: rows.map(r => `J${r.year}`),
-        datasets: [{
-            label: 'Cashflow / Jahr',
-            data: rows.map(r => Math.round(r.cfYear)),
-            borderColor: '#10b981',
-            backgroundColor: 'rgba(16, 185, 129, 0.15)',
-            tension: 0.35,
-            fill: true
-        }]
-        },
-        options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { display: false },
-            title: { display: true, text: 'Cashflow-Entwicklung (10 Jahre)' }
-        },
-        scales: {
-            y: { ticks: { callback: (v) => '€' + Number(v).toLocaleString('de-DE') } }
+        const be = computeBreakEvenFinancing(
+          monthlyRent,
+          iPct,
+          tPct,
+          equity,
+          ancPct
+        );
+        if (be) {
+          byId("be-fin-hint").innerHTML =
+            `Break-Even (Miete = Rate) bei <b>Finanzierungssumme ~ ${fmtEUR(
+              be.finSumBE
+            )}</b>` +
+            ` (ca. Kaufpreis ~ ${fmtEUR(be.priceBE)} bei NK ${ancPct
+              .toFixed(2)
+              .replace(".", ",")}%).`;
+        } else {
+          byId("be-fin-hint").textContent = "";
         }
+
+        const stepSize = Math.max(1000, step);
+        const start = Math.max(0, basePrice - 10 * stepSize);
+        const end = basePrice + 10 * stepSize;
+
+        let beMarked = false;
+
+        for (let p = start; p <= end; p += stepSize) {
+          const finSum = p * (1 + ancPct / 100);
+          const loan = Math.max(finSum - (equity || 0), 0);
+          const rate = annRateMonth(loan, iPct, tPct);
+          const result = monthlyRent - rate;
+
+          let mark = "";
+          if (
+            be &&
+            !beMarked &&
+            Math.abs(finSum - be.finSumBE) <= stepSize * (1 + ancPct / 100) + 1
+          ) {
+            mark = "✓";
+            beMarked = true;
+          } else if (!beMarked && result >= 0) {
+            mark = "✓";
+            beMarked = true;
+          }
+
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${fmtEUR(p)}${mark}</td>
+            <td>${fmtEUR(finSum)}</td>
+            <td>${fmtEUR(rate)}</td>
+            <td>${fmtEUR(monthlyRent)}</td>
+            <td style="color:${result >= 0 ? "#059669" : "#ef4444"}">${fmtEUR(
+            result
+          )}</td>
+            `;
+          tbody.appendChild(tr);
         }
-    });
-    }
+      }
 
-    /* Prefill aus Analyse-Ergebnis */
-    function prefillBreakEven(data) {
-    const price = data.estimatedValue || 0;
-    const sqm = Number((data.livingSpace || '0').toString().replace(',','.')) || 0;
+      function currentAncillaryPct() {
+        const brokerPct = parsePct(byId("be-broker-pct").value);
+        const notaryPct = parsePct(byId("be-notary-pct").value);
+        const stateName = byId("be-state").value;
+        const grestPct = landTaxRates[stateName] || 0;
+        return (brokerPct || 0) + (notaryPct || 0) + grestPct;
+      }
 
-    byId('be-price').value = Math.round(price);
-    byId('be-living-space').value = Math.round(sqm);
+      function computeBreakEvenFinancing(
+        monthlyRent,
+        iPct,
+        tPct,
+        equity,
+        ancPct
+      ) {
+        const i = iPct / 100,
+          t = tPct / 100;
+        const rateSum = i + t;
+        if (rateSum <= 0) return null;
+        const loanBE = (monthlyRent * 12) / rateSum;
+        const finSumBE = loanBE + (equity || 0);
+        const priceBE = finSumBE / (1 + ancPct / 100);
+        return { loanBE, finSumBE, priceBE };
+      }
 
-    // Schätzung aus yield (falls vorhanden)
-    const yieldPct = parsePct(data.yield);
-    const guessedMonthlyRent = yieldPct > 0 ? (price * (yieldPct/100)) / 12 : 0;
-    byId('be-rent-listing').value = Math.round(guessedMonthlyRent);
+      function setMietspiegelAverage(ms) {
+        const pill = document.getElementById("ms-avg-pill");
+        if (!ms || (!ms.avgPerSqm && !(ms.rangeLow && ms.rangeHigh))) {
+          pill.style.display = "none";
+          return;
+        }
+        const avg = ms.avgPerSqm ?? (ms.rangeLow + ms.rangeHigh) / 2;
+        const avgTxt = (Math.round(avg * 100) / 100)
+          .toFixed(2)
+          .replace(".", ",");
 
-    runBreakEven();
-    }
+        pill.innerHTML =
+          `Ø&nbsp;${avgTxt}&nbsp;€/m²&nbsp;` +
+          (ms.source
+            ? `<a href="${ms.source}" target="_blank" rel="noopener">Quelle</a>`
+            : "");
+        pill.style.display = "inline-flex";
+      }
 
-    /* Hook in bestehende displayResults */
-    const _origDisplayResults = displayResults;
-    displayResults = function(data){
-    _origDisplayResults(data);
-    prefillBreakEven(data);
-    };
+      // Event listeners
+      document.addEventListener("change", (e) => {
+        if (e.target.name === "rent-source") {
+          const val = e.target.value;
+          byId("rent-listing-wrap").style.display =
+            val === "listing" ? "flex" : "none";
+          byId("rent-mirror-wrap").style.display =
+            val === "mirror" ? "flex" : "none";
+          byId("rent-combined-wrap").style.display =
+            val === "combined" ? "flex" : "none";
+        }
+      });
+
+      byId("be-state").addEventListener("change", () => {
+        const s = byId("be-state").value;
+        byId("be-grunderwerb-info").textContent = s
+          ? `GrESt ${landTaxRates[s]}% (${s})`
+          : "";
+      });
+
+      byId("be-load-ms").addEventListener("click", () => {
+        loadMietspiegel(byId("be-plz").value, {
+          range: byId("be-ms-range"),
+          valueLabel: byId("be-ms-val"),
+          sourceLabel: byId("be-ms-source"),
+        });
+      });
+
+      byId("be-load-ms-comb").addEventListener("click", () => {
+        loadMietspiegel(byId("be-plz-comb").value, {
+          range: byId("be-ms-range-comb"),
+          valueLabel: byId("be-ms-val-comb"),
+          sourceLabel: null,
+        });
+      });
+
+      byId("be-calc-btn").addEventListener("click", runBreakEven);
+
+      // Auto-recalculate on input changes
+      document.addEventListener("DOMContentLoaded", () => {
+        const stepEl = byId("be-step");
+        if (stepEl) {
+          stepEl.addEventListener("input", runBreakEven);
+          stepEl.addEventListener("change", runBreakEven);
+        }
+
+        const inputs = [
+          "be-price",
+          "be-equity",
+          "be-interest",
+          "be-redemption",
+          "be-rent-listing",
+          "be-nuk",
+          "be-hoa",
+          "be-living-space",
+        ];
+
+        inputs.forEach((id) => {
+          const el = byId(id);
+          if (el) {
+            el.addEventListener("input", runBreakEven);
+            el.addEventListener("change", runBreakEven);
+          }
+        });
+
+        const ms = byId("be-ms-range");
+        if (ms) ms.addEventListener("input", runBreakEven);
+
+        // Auto-load mietspiegel on startup
+        tryAutoLoadMietspiegel();
+      });
+
+      // Demo-Daten für Entwicklung (später entfernen)
+      if (
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1"
+      ) {
+        console.log("Demo-Modus aktiv - Nutze Beispieldaten für Tests");
+      }
     </script>
-
-    <style> 
-        #be-table td, #be-table th { font-size:14px; text-align:right; padding:10px; }
-        #be-table td:first-child, #be-table th:first-child { text-align:left; }
-        #be-table tbody tr:nth-child(even){ background:#f9fafb; }
-        .metrics-grid input {
-            width: 100;
-        }
-    </style>
-</body>
+  </body>
 </html>
